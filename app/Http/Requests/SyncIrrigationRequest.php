@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SyncIrrigationRequest extends FormRequest
 {
@@ -12,7 +13,15 @@ class SyncIrrigationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $configuredToken = config('irrigation.device_token');
+
+        if (! is_string($configuredToken) || $configuredToken === '') {
+            return ! app()->isProduction();
+        }
+
+        $providedToken = $this->header('X-Device-Token');
+
+        return is_string($providedToken) && hash_equals($configuredToken, $providedToken);
     }
 
     /**
@@ -23,7 +32,13 @@ class SyncIrrigationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'pressure_bar' => ['required', 'numeric', 'min:0', 'max:16'],
+            'temperature_celsius' => ['sometimes', 'nullable', 'numeric', 'min:-40', 'max:85'],
+            'humidity_percent' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:100'],
+            'inverter_hz' => ['required', 'numeric', 'min:0', 'max:80'],
+            'inverter_status' => ['required', 'string', Rule::in(['RUN', 'STOP', 'FAULT'])],
+            'inverter_current' => ['required', 'numeric', 'min:0', 'max:200'],
+            'error_code' => ['sometimes', 'integer', 'min:0', 'max:65535'],
         ];
     }
 }

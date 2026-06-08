@@ -3,16 +3,26 @@
 namespace App\Models;
 
 use Database\Factories\ValveFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['valve_number', 'name', 'is_active', 'last_activated_at'])]
 class Valve extends Model
 {
     /** @use HasFactory<ValveFactory> */
     use HasFactory;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'valve_number',
+        'name',
+        'is_active',
+        'last_activated_at',
+    ];
 
     protected $attributes = [
         'is_active' => false,

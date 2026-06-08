@@ -18,7 +18,8 @@ class SystemSettingFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'key' => fake()->unique()->slug(2),
+            'value' => fake()->word(),
         ];
     }
 }

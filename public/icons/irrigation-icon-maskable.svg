@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Smart Solar Irrigation">
+    <rect width="512" height="512" fill="#166534"/>
+    <circle cx="256" cy="256" r="206" fill="#f8fafc"/>
+    <path d="M116 326c44 60 91 90 140 90s96-30 140-90c-45 23-92 34-140 34s-95-11-140-34Z" fill="#22c55e"/>
+    <path d="M256 86c50 61 75 109 75 145 0 45-34 79-75 79s-75-34-75-79c0-36 25-84 75-145Z" fill="#84cc16"/>
+    <path d="M128 160h256v52H128z" fill="#facc15"/>
+    <path d="M152 212 128 160m90 52-24-52m90 52-24-52m90 52-24-52" stroke="#854d0e" stroke-width="16" stroke-linecap="round"/>
+</svg>

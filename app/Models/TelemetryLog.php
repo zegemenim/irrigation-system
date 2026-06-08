@@ -3,17 +3,30 @@
 namespace App\Models;
 
 use Database\Factories\TelemetryLogFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['pressure_bar', 'inverter_hz', 'inverter_status', 'inverter_current', 'error_code'])]
 class TelemetryLog extends Model
 {
     /** @use HasFactory<TelemetryLogFactory> */
     use HasFactory;
 
-    public const null UPDATED_AT = null;
+    public const UPDATED_AT = null;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'pressure_bar',
+        'temperature_celsius',
+        'humidity_percent',
+        'inverter_hz',
+        'inverter_status',
+        'inverter_current',
+        'error_code',
+    ];
 
     protected $attributes = [
         'error_code' => 0,
@@ -28,6 +41,8 @@ class TelemetryLog extends Model
     {
         return [
             'pressure_bar' => 'float',
+            'temperature_celsius' => 'float',
+            'humidity_percent' => 'float',
             'inverter_hz' => 'float',
             'inverter_current' => 'float',
             'error_code' => 'integer',

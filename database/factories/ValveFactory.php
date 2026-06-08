@@ -18,7 +18,10 @@ class ValveFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'valve_number' => fake()->numberBetween(1, (int) config('irrigation.valve_count', 4)),
+            'name' => fake()->words(2, true),
+            'is_active' => false,
+            'last_activated_at' => null,
         ];
     }
 }
