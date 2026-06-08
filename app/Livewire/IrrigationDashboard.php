@@ -55,7 +55,7 @@ class IrrigationDashboard extends Component
     public array $valve_states = [];
 
     /**
-     * @var array<int, array{id: int, valve_number: int, name: string, is_active: bool, last_activated_at: ?string, moisture_percent: int}>
+     * @var array<int, array{id: int, valve_number: int, name: string, is_active: bool, last_activated_at: ?string, humidity_percent: ?float}>
      */
     public array $valves = [];
 
@@ -159,7 +159,7 @@ class IrrigationDashboard extends Component
                 'name' => $valve->name,
                 'is_active' => $valve->is_active,
                 'last_activated_at' => $this->formatDateTime($valve->last_activated_at),
-                'moisture_percent' => $this->moistureForValve($valve),
+                'humidity_percent' => $latestTelemetry?->humidity_percent,
             ])
             ->all();
 
@@ -462,13 +462,6 @@ class IrrigationDashboard extends Component
             4 => 'Batı Bölme',
             default => "Bölme {$valveNumber}",
         };
-    }
-
-    private function moistureForValve(Valve $valve): int
-    {
-        $base = 37 + ($valve->valve_number * 9);
-
-        return $valve->is_active ? min(92, $base + 19) : min(81, $base);
     }
 
     private function showNotice(string $message, string $tone = 'success'): void

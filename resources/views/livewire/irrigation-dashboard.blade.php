@@ -101,10 +101,15 @@
 
                                     <div class="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
                                         <div>
-                                            <p class="text-sm text-slate-400">Nem tahmini</p>
-                                            <div class="mt-2 h-2.5 overflow-hidden rounded-full bg-slate-800">
-                                                <div class="h-full rounded-full {{ $isActive ? 'bg-cyan-300' : 'bg-lime-400' }}" style="width: {{ $valve['moisture_percent'] }}%"></div>
-                                            </div>
+                                            <p class="text-sm text-slate-400">Nem değeri</p>
+                                            @if ($valve['humidity_percent'] === null)
+                                                <p class="mt-2 text-sm font-semibold text-amber-100">Nem değeri gelmiyor</p>
+                                            @else
+                                                <div class="mt-2 h-2.5 overflow-hidden rounded-full bg-slate-800">
+                                                    <div class="h-full rounded-full {{ $isActive ? 'bg-cyan-300' : 'bg-lime-400' }}" style="width: {{ $valve['humidity_percent'] }}%"></div>
+                                                </div>
+                                                <p class="mt-2 text-sm font-semibold text-white">{{ number_format($valve['humidity_percent'], 1) }}%</p>
+                                            @endif
                                             <p class="mt-2 text-sm text-slate-400">{{ $valve['last_activated_at'] ?? 'Henüz açılmadı' }}</p>
                                         </div>
                                         <button type="button" wire:click="toggleValve({{ $valve['id'] }})" @disabled($system_mode === 'auto' || $emergency_stop) class="inline-flex h-12 min-w-28 items-center justify-center rounded-lg px-4 text-sm font-bold text-white shadow-sm transition disabled:cursor-not-allowed disabled:opacity-45 {{ $isActive ? 'bg-cyan-600 hover:bg-cyan-500' : 'bg-slate-700 hover:bg-slate-600' }}">
