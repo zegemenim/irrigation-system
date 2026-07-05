@@ -64,6 +64,28 @@ test('auto mode returns the first matching schedule and logs telemetry', functio
         ->and($telemetryLog?->humidity_percent)->toBe(62.4);
 });
 
+test('auto mode resolves schedules using istanbul timezone', function () {
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-06-01 04:15:00', 'UTC'));
+
+    Valve::factory()->create(['valve_number' => 1]);
+    $valveTwo = Valve::factory()->create(['valve_number' => 2]);
+    Valve::factory()->create(['valve_number' => 3]);
+    Valve::factory()->create(['valve_number' => 4]);
+    SystemSetting::factory()->create(['key' => 'system_mode', 'value' => 'auto']);
+
+    Schedule::factory()->create([
+        'valve_id' => $valveTwo->id,
+        'days_of_week' => ['monday'],
+        'start_time' => '07:00',
+        'duration_minutes' => 30,
+    ]);
+
+    $this->postJson('/api/v1/irrigation/sync', telemetryPayload())
+        ->assertSuccessful()
+        ->assertJsonPath('set_valves', [false, true, false, false])
+        ->assertJsonPath('active_schedule.valve_number', 2);
+});
+
 test('manual mode returns explicit valve states', function () {
     Valve::factory()->create(['valve_number' => 1, 'is_active' => true]);
     Valve::factory()->create(['valve_number' => 2, 'is_active' => false]);

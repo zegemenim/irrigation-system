@@ -374,13 +374,13 @@ class IrrigationDashboard extends Component
 
         $this->active_schedule = $activeSchedule === null ? null : [
             'id' => $activeSchedule->id,
-            'valve' => $this->formatValveLabel($activeSchedule),
+            'valve' => $this->formatValveLabel($activeSchedule, $now),
             'remaining_minutes' => $this->remainingMinutes($activeSchedule, $now),
         ];
 
         $this->next_schedule = $nextSchedule === null ? null : [
             'id' => $nextSchedule['schedule']->id,
-            'valve' => $this->formatValveLabel($nextSchedule['schedule']),
+            'valve' => $this->formatValveLabel($nextSchedule['schedule'], $nextSchedule['starts_at']),
             'starts_at' => $this->formatDateTime($nextSchedule['starts_at']),
             'starts_for_humans' => $nextSchedule['starts_at']->diffForHumans(),
         ];
@@ -423,11 +423,11 @@ class IrrigationDashboard extends Component
             ->all();
     }
 
-    private function formatValveLabel(Schedule $schedule): string
+    private function formatValveLabel(Schedule $schedule, CarbonImmutable $date): string
     {
         $valveNumber = app(ResolveActiveIrrigationSchedule::class)->valveForDate(
             $schedule,
-            CarbonImmutable::now(config('app.timezone')),
+            $date,
         );
 
         if ($valveNumber === null) {
