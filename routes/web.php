@@ -4,11 +4,7 @@ use App\Livewire\IrrigationDashboard;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect()->route('dashboard');
-    }
-
-    return redirect()->route('filament.admin.auth.login');
+    return view('wind-dashboard');
 })->name('home');
 
 Route::redirect('/login', '/admin/login')->name('login');
