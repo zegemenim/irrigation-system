@@ -5,23 +5,23 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-test('guest users can open the public wind dashboard at the root path', function () {
-    $this->get('/')
-        ->assertSuccessful()
-        ->assertSee('Istabreeze 500W', false);
-});
-
-test('guest users are redirected from dashboard to the login screen', function () {
-    $response = $this->get('/dashboard');
+test('guest users are redirected from the root dashboard to the login screen', function () {
+    $response = $this->get('/');
 
     $response->assertRedirect('/admin/login');
 });
 
-test('authenticated users open the irrigation application at the dashboard path', function () {
+test('dashboard path redirects to the root dashboard', function () {
+    $response = $this->get('/dashboard');
+
+    $response->assertRedirect('/');
+});
+
+test('authenticated users open the irrigation application at the root path', function () {
     $this->actingAs(User::factory()->create());
 
     $this->followingRedirects()
-        ->get('/dashboard')
+        ->get('/')
         ->assertSuccessful()
         ->assertSee('4 bölme, tek kontrol yüzeyi');
 });

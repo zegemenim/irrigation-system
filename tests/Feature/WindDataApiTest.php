@@ -14,6 +14,7 @@ test('wind data endpoint stores wind speed with generated power', function () {
     $this->postJson('/api/wind-data', ['wind_speed' => 4.5])
         ->assertCreated()
         ->assertJsonPath('status', 'success')
+        ->assertJsonPath('message', 'Veri başarıyla kaydedildi')
         ->assertJsonPath('data.wind_speed', 4.5)
         ->assertJsonPath('data.generated_power', 4.67);
 
@@ -30,6 +31,7 @@ test('wind data endpoint clamps generated power by turbine curve', function (flo
 
     expect((float) $response->json('data.generated_power'))->toBe($expectedPower);
 })->with([
+    'zero wind speed' => [0.0, 0.0],
     'below cut in' => [2.4, 0.0],
     'at cut in' => [2.5, 0.0],
     'rated wind' => [12.0, 500.0],
@@ -56,8 +58,8 @@ test('chart data endpoint returns the latest thirty readings in chronological or
         ->and($response->json('data.29.wind_speed'))->toBe(35);
 });
 
-test('home route renders wind dashboard', function () {
-    $this->get('/')
+test('wind route renders wind dashboard', function () {
+    $this->get('/wind')
         ->assertSuccessful()
         ->assertSee('Istabreeze 500W', false)
         ->assertSee('chart-data', false);

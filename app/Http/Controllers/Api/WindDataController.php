@@ -20,6 +20,7 @@ class WindDataController extends Controller
 
         return response()->json([
             'status' => 'success',
+            'message' => 'Veri başarıyla kaydedildi',
             'data' => $this->serializeWindLog($windLog),
         ], 201);
     }
@@ -41,15 +42,15 @@ class WindDataController extends Controller
 
     private function generatedPower(float $windSpeed): float
     {
-        if ($windSpeed < 2.5) {
-            return 0.0;
+        if ($windSpeed >= 2.5 && $windSpeed <= 12.0) {
+            return 500 * pow(($windSpeed - 2.5) / 9.5, 3);
         }
 
         if ($windSpeed > 12.0) {
             return 500.0;
         }
 
-        return 500 * pow(($windSpeed - 2.5) / 9.5, 3);
+        return 0.0;
     }
 
     /**
