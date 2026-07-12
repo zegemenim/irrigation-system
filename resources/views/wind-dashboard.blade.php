@@ -375,6 +375,41 @@
                 </div>
             </div>
         </div>
+
+        {{-- Glossary --}}
+        <div class="mt-5 glass rounded-2xl p-6">
+            <div class="flex items-center gap-3 border-b border-white/[0.07] pb-4">
+                <span class="text-2xl">📖</span>
+                <div>
+                    <h3 class="text-base font-bold text-white">Teknik Terimler Kılavuzu</h3>
+                    <p class="mt-0.5 text-[11px] font-semibold uppercase tracking-widest text-slate-400">Analizdeki değerler tam olarak ne anlama geliyor?</p>
+                </div>
+            </div>
+            <div class="mt-5 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 text-sm">
+                <div>
+                    <h4 class="font-bold text-emerald-300">Kapasite Faktörü (CF)</h4>
+                    <p class="mt-1.5 leading-relaxed text-slate-300">Bir türbinin belirli bir dönemde ürettiği gerçek enerjinin, <strong>sürekli tam kapasitede (500W)</strong> çalışsaydı üreteceği maksimum enerjiye oranıdır. Rüzgar verimliliğinin ve yatırım geri dönüşünün <span class="text-white font-medium">en net ve en önemli</span> göstergesidir.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-blue-300">Persentil (P10, P50, P90)</h4>
+                    <p class="mt-1.5 leading-relaxed text-slate-300"><span class="text-white font-semibold">P10:</span> Zamanın %90'ında rüzgar bu hızın üzerindedir (garanti edilen alt limit).<br>
+                    <span class="text-white font-semibold">P50:</span> Rüzgar değerlerinin tam ortasıdır (Medyan).<br>
+                    <span class="text-white font-semibold">P90:</span> Zamanın sadece %10'unda rüzgar bu hıza veya üzerine ulaşır (nadir görülen şiddetli rüzgar).</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-amber-300">Tahmini Yıllık Üretim</h4>
+                    <p class="mt-1.5 leading-relaxed text-slate-300">Mevcut dönemdeki ölçüm ortalamasının tüm yıl boyunca (8760 saat) aynı şekilde devam edeceği varsayılarak hesaplanan <strong>1 yıllık toplam elektrik enerjisi (kWh)</strong> değeridir. Yıllık elektrik faturanızdan ne kadar tasarruf edeceğinizi gösterir.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-violet-300">Standart Sapma</h4>
+                    <p class="mt-1.5 leading-relaxed text-slate-300">Rüzgarın veya üretimin ne kadar <span class="text-white font-medium">değişken (dalgalı)</span> olduğunu gösterir. Düşük standart sapma, rüzgarın düzenli ve sabit estiğini; yüksek standart sapma ise rüzgarın çok sık durup aniden fırtına şeklinde hızlandığını belirtir.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-teal-300">Aktif Süre</h4>
+                    <p class="mt-1.5 leading-relaxed text-slate-300">Rüzgarın, türbinin elektrik üretmeye başlaması için gereken <strong>minimum hıza (Istabreeze 500W için 2.5 m/s)</strong> ulaştığı ve türbinin boşta dönmeyip gerçekten enerji ürettiği sürenin genel zamana oranıdır.</p>
+                </div>
+            </div>
+        </div>
     </section>
 
     {{-- ══════════════════════════════════════════════════ ZAMAN GRAFİKLERİ --}}
