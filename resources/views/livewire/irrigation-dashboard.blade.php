@@ -76,7 +76,9 @@
                     <div class="relative mt-5 grid gap-4 md:grid-cols-2">
                         @foreach ($valves as $valve)
                             @php
-                                $isActive = $valve_states[$valve['id']] ?? false;
+                                $isManualActive = $valve_states[$valve['id']] ?? false;
+                                $isAutoActive   = $valve['is_auto_active'] ?? false;
+                                $isActive       = $isManualActive || $isAutoActive;
                             @endphp
 
                             <article class="field-zone group relative min-h-60 overflow-hidden rounded-lg border p-5 transition {{ $isActive ? 'border-cyan-300/70 bg-cyan-300/12 shadow-lg shadow-cyan-950/30' : 'border-white/10 bg-slate-950/45 hover:bg-slate-900/70' }}">
@@ -94,9 +96,16 @@
                                             <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Bölme {{ $valve['valve_number'] }}</p>
                                             <h3 class="mt-1 text-2xl font-semibold text-white">{{ $valve['name'] }}</h3>
                                         </div>
-                                        <span class="rounded-lg px-3 py-1 text-xs font-bold uppercase {{ $isActive ? 'bg-cyan-300 text-slate-950' : 'bg-slate-800 text-slate-300' }}">
-                                            {{ $isActive ? 'Suluyor' : 'Kapalı' }}
-                                        </span>
+                                        <div class="flex flex-col items-end gap-1">
+                                            <span class="rounded-lg px-3 py-1 text-xs font-bold uppercase {{ $isActive ? 'bg-cyan-300 text-slate-950' : 'bg-slate-800 text-slate-300' }}">
+                                                {{ $isActive ? 'Suluyor' : 'Kapalı' }}
+                                            </span>
+                                            @if ($isAutoActive)
+                                                <span class="rounded-md bg-emerald-400/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300">
+                                                    Otomatik
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
 
                                     <div class="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
@@ -112,8 +121,8 @@
                                             @endif
                                             <p class="mt-2 text-sm text-slate-400">{{ $valve['last_activated_at'] ?? 'Henüz açılmadı' }}</p>
                                         </div>
-                                        <button type="button" wire:click="toggleValve({{ $valve['id'] }})" @disabled($system_mode === 'auto' || $emergency_stop) class="inline-flex h-12 min-w-28 items-center justify-center rounded-lg px-4 text-sm font-bold text-white shadow-sm transition disabled:cursor-not-allowed disabled:opacity-45 {{ $isActive ? 'bg-cyan-600 hover:bg-cyan-500' : 'bg-slate-700 hover:bg-slate-600' }}">
-                                            {{ $isActive ? 'Kapat' : 'Aç' }}
+                                        <button type="button" wire:click="toggleValve({{ $valve['id'] }})" @disabled($system_mode === 'auto' || $emergency_stop) class="inline-flex h-12 min-w-28 items-center justify-center rounded-lg px-4 text-sm font-bold text-white shadow-sm transition disabled:cursor-not-allowed disabled:opacity-45 {{ $isManualActive ? 'bg-cyan-600 hover:bg-cyan-500' : 'bg-slate-700 hover:bg-slate-600' }}">
+                                            {{ $isManualActive ? 'Kapat' : 'Aç' }}
                                         </button>
                                     </div>
                                 </div>

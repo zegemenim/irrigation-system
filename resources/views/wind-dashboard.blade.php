@@ -45,6 +45,19 @@
                 </article>
             </section>
 
+            <!-- Zaman Aralığı Seçici -->
+            <section class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-semibold uppercase tracking-widest text-slate-400">Zaman Aralığı:</span>
+                <div class="flex flex-wrap gap-2" id="time-range-buttons">
+                    <button data-minutes="2"  class="time-range-btn rounded-md border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.14]">2 dk</button>
+                    <button data-minutes="10" class="time-range-btn rounded-md border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.14]">10 dk</button>
+                    <button data-minutes="30" class="time-range-btn rounded-md border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.14]">30 dk</button>
+                    <button data-minutes="60" class="time-range-btn rounded-md border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.14]">1 sa</button>
+                    <button data-minutes="360" class="time-range-btn rounded-md border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.14]">6 sa</button>
+                    <button data-minutes="0"  class="time-range-btn active rounded-md border border-cyan-300/40 bg-cyan-300/[0.13] px-3 py-1.5 text-xs font-semibold text-cyan-200 transition">Tümü</button>
+                </div>
+            </section>
+
             <section class="grid flex-1 gap-5 xl:grid-cols-2">
                 <article class="min-h-[22rem] rounded-lg border border-white/10 bg-slate-950/55 p-4 shadow-2xl shadow-slate-950/40 backdrop-blur sm:p-5">
                     <div class="flex items-center justify-between gap-4">
@@ -77,10 +90,12 @@
 
     <script>
         const chartDataUrl = @json(route('api.wind.chart-data'));
-        const emptyLabels = [];
-        const emptyValues = [];
         const chartGridColor = 'rgba(148, 163, 184, 0.16)';
         const chartTickColor = 'rgba(226, 232, 240, 0.72)';
+
+        // Seçili zaman aralığı (0 = tümü / son 30 kayıt)
+        let selectedMinutes = 0;
+        let refreshTimer = null;
 
         Chart.defaults.color = chartTickColor;
         Chart.defaults.font.family = 'ui-sans-serif, system-ui, sans-serif';
@@ -91,10 +106,10 @@
             return new Chart(context, {
                 type: 'line',
                 data: {
-                    labels: emptyLabels,
+                    labels: [],
                     datasets: [{
                         label,
-                        data: emptyValues,
+                        data: [],
                         borderColor,
                         backgroundColor,
                         borderWidth: 3,
@@ -169,6 +184,20 @@
             500
         );
 
+        // Zaman aralığı butonları
+        document.getElementById('time-range-buttons').addEventListener('click', (e) => {
+            const btn = e.target.closest('.time-range-btn');
+            if (! btn) { return; }
+
+            document.querySelectorAll('.time-range-btn').forEach((b) => {
+                b.className = 'time-range-btn rounded-md border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:bg-white/[0.14]';
+            });
+            btn.className = 'time-range-btn active rounded-md border border-cyan-300/40 bg-cyan-300/[0.13] px-3 py-1.5 text-xs font-semibold text-cyan-200 transition';
+
+            selectedMinutes = parseInt(btn.dataset.minutes, 10);
+            refreshDashboard();
+        });
+
         function setConnectionState(isConnected, label) {
             const indicator = document.getElementById('connection-indicator');
             const lastUpdated = document.getElementById('last-updated');
@@ -195,10 +224,12 @@
 
         async function refreshDashboard() {
             try {
-                const response = await fetch(chartDataUrl, {
-                    headers: {
-                        Accept: 'application/json',
-                    },
+                const url = selectedMinutes > 0
+                    ? `${chartDataUrl}?minutes=${selectedMinutes}`
+                    : chartDataUrl;
+
+                const response = await fetch(url, {
+                    headers: { Accept: 'application/json' },
                 });
 
                 if (! response.ok) {

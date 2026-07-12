@@ -60,7 +60,7 @@ class IrrigationDashboard extends Component
     public array $valves = [];
 
     /**
-     * @var array{id: int, valve: string, remaining_minutes: int}|null
+     * @var array{id: int, valve: string, remaining_minutes: int, active_valve_number: ?int}|null
      */
     public ?array $active_schedule = null;
 
@@ -152,17 +152,6 @@ class IrrigationDashboard extends Component
             ->map(fn (bool $isActive): bool => $isActive)
             ->all();
 
-        $this->valves = $valves
-            ->map(fn (Valve $valve): array => [
-                'id' => $valve->id,
-                'valve_number' => $valve->valve_number,
-                'name' => $valve->name,
-                'is_active' => $valve->is_active,
-                'last_activated_at' => $this->formatDateTime($valve->last_activated_at),
-                'humidity_percent' => $latestTelemetry?->humidity_percent,
-            ])
-            ->all();
-
         $this->active_valve_count = $valves
             ->where('is_active', true)
             ->count();
@@ -171,7 +160,23 @@ class IrrigationDashboard extends Component
             ->where('is_enabled', true)
             ->count();
 
+        // Önce program özetini yükle; valve mapping'de active_valve_number'a ihtiyaç var
         $this->loadScheduleSummary();
+
+        $activeValveNumber = $this->active_schedule['active_valve_number'] ?? null;
+
+        $this->valves = $valves
+            ->map(fn (Valve $valve): array => [
+                'id' => $valve->id,
+                'valve_number' => $valve->valve_number,
+                'name' => $valve->name,
+                'is_active' => $valve->is_active,
+                'is_auto_active' => $this->system_mode === 'auto' && $activeValveNumber === $valve->valve_number,
+                'last_activated_at' => $this->formatDateTime($valve->last_activated_at),
+                'humidity_percent' => $latestTelemetry?->humidity_percent,
+            ])
+            ->all();
+
         $this->loadRecentTelemetry();
         $this->loadSchedules();
     }
@@ -372,10 +377,16 @@ class IrrigationDashboard extends Component
         $activeSchedule = $resolver->active($now);
         $nextSchedule = $resolver->next($now);
 
+        $activeValveNumber = null;
+        if ($activeSchedule !== null) {
+            $activeValveNumber = app(ResolveActiveIrrigationSchedule::class)->valveForDate($activeSchedule, $now);
+        }
+
         $this->active_schedule = $activeSchedule === null ? null : [
             'id' => $activeSchedule->id,
             'valve' => $this->formatValveLabel($activeSchedule, $now),
             'remaining_minutes' => $this->remainingMinutes($activeSchedule, $now),
+            'active_valve_number' => $activeValveNumber,
         ];
 
         $this->next_schedule = $nextSchedule === null ? null : [
