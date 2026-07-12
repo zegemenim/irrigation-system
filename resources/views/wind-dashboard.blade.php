@@ -270,37 +270,66 @@
             </div>
         </div>
 
-        {{-- Secondary stats --}}
-        <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-            <div class="glass rounded-xl p-4">
-                <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Std. Sapma</p>
-                <p class="mt-1.5 text-2xl font-bold text-white"><span id="stat-std">—</span> <span class="text-sm font-medium text-slate-400">m/s</span></p>
-                <p class="mt-1 text-[11px] text-slate-500">Rüzgar değişkenliği</p>
+        {{-- Detaylı İstatistikler --}}
+        <div class="mt-5 grid gap-5 xl:grid-cols-2">
+            {{-- Rüzgar İstatistikleri --}}
+            <div class="glass rounded-2xl p-5">
+                <div class="mb-4 flex items-center gap-2">
+                    <span class="text-lg">🌬️</span>
+                    <h3 class="text-[13px] font-semibold uppercase tracking-widest text-teal-400">Rüzgar Karakteristiği</h3>
+                </div>
+                <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">P10 Persentil</p>
+                        <p class="mt-1 text-2xl font-bold text-white"><span id="stat-p10">—</span><span class="ml-1 text-xs font-medium text-slate-400">m/s</span></p>
+                        <p class="mt-1 text-[10px] text-slate-500">Zamanın %90'ı üstünde</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">P50 (Medyan)</p>
+                        <p class="mt-1 text-2xl font-bold text-white"><span id="stat-p50">—</span><span class="ml-1 text-xs font-medium text-slate-400">m/s</span></p>
+                        <p class="mt-1 text-[10px] text-slate-500">Orta nokta</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">P90 Persentil</p>
+                        <p class="mt-1 text-2xl font-bold text-white"><span id="stat-p90">—</span><span class="ml-1 text-xs font-medium text-slate-400">m/s</span></p>
+                        <p class="mt-1 text-[10px] text-slate-500">Zamanın %10'u üstünde</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Std. Sapma</p>
+                        <p class="mt-1 text-2xl font-bold text-white"><span id="stat-std">—</span><span class="ml-1 text-xs font-medium text-slate-400">m/s</span></p>
+                        <p class="mt-1 text-[10px] text-slate-500">Değişkenlik ölçüsü</p>
+                    </div>
+                </div>
             </div>
-            <div class="glass rounded-xl p-4">
-                <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">P10 Persentil</p>
-                <p class="mt-1.5 text-2xl font-bold text-white"><span id="stat-p10">—</span> <span class="text-sm font-medium text-slate-400">m/s</span></p>
-                <p class="mt-1 text-[11px] text-slate-500">Zamanın %90'ında bu değerin üstü</p>
-            </div>
-            <div class="glass rounded-xl p-4">
-                <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">P50 (Medyan)</p>
-                <p class="mt-1.5 text-2xl font-bold text-white"><span id="stat-p50">—</span> <span class="text-sm font-medium text-slate-400">m/s</span></p>
-                <p class="mt-1 text-[11px] text-slate-500">Zamanın %50'sinde bu değerin üstü</p>
-            </div>
-            <div class="glass rounded-xl p-4">
-                <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">P90 Persentil</p>
-                <p class="mt-1.5 text-2xl font-bold text-white"><span id="stat-p90">—</span> <span class="text-sm font-medium text-slate-400">m/s</span></p>
-                <p class="mt-1 text-[11px] text-slate-500">Zamanın %10'unda bu değerin üstü</p>
-            </div>
-            <div class="glass rounded-xl p-4">
-                <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Ort. Güç (Medyan)</p>
-                <p class="mt-1.5 text-2xl font-bold text-white"><span id="stat-med-power">—</span> <span class="text-sm font-medium text-slate-400">W</span></p>
-                <p class="mt-1 text-[11px] text-slate-500">Güç medyan değeri</p>
-            </div>
-            <div class="glass rounded-xl p-4">
-                <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Maks. Güç</p>
-                <p class="mt-1.5 text-2xl font-bold text-white"><span id="stat-max-power">—</span> <span class="text-sm font-medium text-slate-400">W</span></p>
-                <p class="mt-1 text-[11px] text-slate-500">Kaydedilen en yüksek</p>
+
+            {{-- Güç İstatistikleri --}}
+            <div class="glass rounded-2xl p-5">
+                <div class="mb-4 flex items-center gap-2">
+                    <span class="text-lg">⚡</span>
+                    <h3 class="text-[13px] font-semibold uppercase tracking-widest text-amber-400">Güç ve Enerji Üretimi</h3>
+                </div>
+                <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Ort. Üretim</p>
+                        <p class="mt-1 text-2xl font-bold text-white"><span id="stat-avg-pow2">—</span><span class="ml-1 text-xs font-medium text-slate-400">W</span></p>
+                        <p class="mt-1 text-[10px] text-slate-500">Genel ortalama</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Medyan Güç</p>
+                        <p class="mt-1 text-2xl font-bold text-white"><span id="stat-med-power">—</span><span class="ml-1 text-xs font-medium text-slate-400">W</span></p>
+                        <p class="mt-1 text-[10px] text-slate-500">Güç orta noktası</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Maks Güç</p>
+                        <p class="mt-1 text-2xl font-bold text-white"><span id="stat-max-power">—</span><span class="ml-1 text-xs font-medium text-slate-400">W</span></p>
+                        <p class="mt-1 text-[10px] text-slate-500">Kaydedilen tepe güç</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Std. Sapma</p>
+                        <p class="mt-1 text-2xl font-bold text-white"><span id="stat-std-pow">—</span><span class="ml-1 text-xs font-medium text-slate-400">W</span></p>
+                        <p class="mt-1 text-[10px] text-slate-500">Üretim dalgalanması</p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -585,6 +614,7 @@ function computeStats(rows) {
         p50     : percentile(sorted, 50),
         p90     : percentile(sorted, 90),
         std     : stdDev(speeds, avgWind),
+        stdPow  : stdDev(powers, avgPow),
         medPow  : percentile(sortedP, 50),
         maxPow  : +sortedP[n-1].toFixed(2),
         periodHours, periodKwh, annualKwh,
@@ -663,6 +693,8 @@ function updStats(rows) {
     setTxt('stat-p90', s.p90);
     setTxt('stat-med-power', s.medPow);
     setTxt('stat-max-power', s.maxPow);
+    setTxt('stat-avg-pow2', s.avgPow);
+    setTxt('stat-std-pow', s.stdPow);
 
     // Histogram
     histChart.data.labels            = s.histLabels;
