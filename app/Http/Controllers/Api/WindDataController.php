@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreWindDataRequest;
 use App\Models\WindLog;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 
 class WindDataController extends Controller
@@ -28,22 +29,30 @@ class WindDataController extends Controller
     public function chartData(): JsonResponse
     {
         $minutes = (int) request()->query('minutes', 0);
+        $from = request()->query('from');
+        $to = request()->query('to');
 
         $query = WindLog::query()->orderBy('id');
 
-        if ($minutes > 0) {
+        if ($from && $to) {
+            // Özel tarih aralığı
+            $query->whereBetween('created_at', [
+                Carbon::parse($from)->utc(),
+                Carbon::parse($to)->utc(),
+            ]);
+        } elseif ($minutes > 0) {
             $query->where('created_at', '>=', now()->subMinutes($minutes));
         } else {
-            // Varsayılan: son 30 kayıt
-            $query = WindLog::query()
+            // Varsayılan: son 60 kayıt
+            $windLogs = WindLog::query()
                 ->latest('id')
-                ->limit(30)
+                ->limit(60)
                 ->get()
                 ->reverse()
                 ->values()
                 ->map(fn (WindLog $windLog): array => $this->serializeWindLog($windLog));
 
-            return response()->json(['data' => $query]);
+            return response()->json(['data' => $windLogs]);
         }
 
         $windLogs = $query
