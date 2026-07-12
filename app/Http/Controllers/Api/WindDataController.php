@@ -35,25 +35,14 @@ class WindDataController extends Controller
         $query = WindLog::query()->orderBy('id');
 
         if ($from && $to) {
-            // Özel tarih aralığı
             $query->whereBetween('created_at', [
                 Carbon::parse($from)->utc(),
                 Carbon::parse($to)->utc(),
             ]);
         } elseif ($minutes > 0) {
             $query->where('created_at', '>=', now()->subMinutes($minutes));
-        } else {
-            // Varsayılan: son 60 kayıt
-            $windLogs = WindLog::query()
-                ->latest('id')
-                ->limit(60)
-                ->get()
-                ->reverse()
-                ->values()
-                ->map(fn (WindLog $windLog): array => $this->serializeWindLog($windLog));
-
-            return response()->json(['data' => $windLogs]);
         }
+        // else: parametre yok → tüm kayıtlar (limit yok)
 
         $windLogs = $query
             ->get()
