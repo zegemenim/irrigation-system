@@ -2,8 +2,8 @@
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app
 COPY package*.json ./
-# Tüm bağımlılıkları yükle (Vite vs. dahil)
-RUN npm install
+# Tüm bağımlılıkları (devDependencies dahil) yükle
+RUN npm install --include=dev
 COPY . .
 RUN npm run build
 
