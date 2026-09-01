@@ -7,13 +7,13 @@ COPY . .
 RUN rm -f package-lock.json && npm install
 RUN npm run build
 
-# Aşama 2: PHP 8.3 Apache Üretim Ortamı
-FROM php:8.3-apache
+# Aşama 2: PHP 8.4 Apache Üretim Ortamı
+FROM php:8.4-apache
 
 # Gerekli paketlerin kurulumu
 RUN apt-get update && apt-get install -y \
-    git curl libpng-dev libonig-dev libxml2-dev zip unzip sqlite3 libsqlite3-dev \
-    && docker-php-ext-install pdo_sqlite mbstring exif pcntl bcmath gd \
+    git curl libpng-dev libonig-dev libxml2-dev zip unzip sqlite3 libsqlite3-dev libzip-dev libicu-dev \
+    && docker-php-ext-install pdo_sqlite mbstring exif pcntl bcmath gd zip intl \
     && a2enmod rewrite \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
