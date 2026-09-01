@@ -1,10 +1,10 @@
 # Aşama 1: Frontend derleyici (Vite)
-FROM node:20-alpine AS frontend-builder
+FROM node:20 AS frontend-builder
 WORKDIR /app
 # Projedeki tüm dosyaları kopyala
 COPY . .
 # Tüm bağımlılıkları yükle ve build al
-RUN npm install
+RUN rm -f package-lock.json && npm install
 RUN npm run build
 
 # Aşama 2: PHP 8.3 Apache Üretim Ortamı
