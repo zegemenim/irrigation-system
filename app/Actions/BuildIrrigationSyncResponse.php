@@ -31,17 +31,25 @@ class BuildIrrigationSyncResponse
         $maxSafePressureBar = $this->maxSafePressureBar();
         $emergencyStop = SystemSetting::boolValue('emergency_stop');
         $pressureShutdown = $telemetry['pressure_bar'] > $maxSafePressureBar;
+        $drainMode = SystemSetting::boolValue('drain_mode');
 
-        if ($emergencyStop || $pressureShutdown) {
+        if ($emergencyStop) {
             return $this->forceStopResponse(
                 maxSafePressureBar: $maxSafePressureBar,
                 emergencyStop: $emergencyStop,
-                pressureShutdown: $pressureShutdown,
+                pressureShutdown: false,
                 pressureBar: $telemetry['pressure_bar'],
             );
         }
 
-        $drainMode = SystemSetting::boolValue('drain_mode');
+        if ($pressureShutdown && ! $drainMode) {
+            return $this->forceStopResponse(
+                maxSafePressureBar: $maxSafePressureBar,
+                emergencyStop: false,
+                pressureShutdown: true,
+                pressureBar: $telemetry['pressure_bar'],
+            );
+        }
 
         $systemMode = SystemSetting::value('system_mode', 'auto');
         $systemMode = in_array($systemMode, ['auto', 'manual'], true) ? $systemMode : 'auto';
