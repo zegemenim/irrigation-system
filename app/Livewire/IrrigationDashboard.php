@@ -292,7 +292,7 @@ class IrrigationDashboard extends Component
     public function saveAutomationSettings(): void
     {
         $validated = $this->validate([
-            'max_safe_pressure_bar' => ['required', 'numeric', 'min:0.5', 'max:4'],
+            'max_safe_pressure_bar' => ['required', 'numeric', 'min:0.5', 'max:16'],
             'default_target_hz' => ['required', 'numeric', 'min:0', 'max:55'],
             'manual_target_hz' => ['required', 'numeric', 'min:0', 'max:55'],
             'drain_valve_id' => ['nullable', 'exists:valves,id'],

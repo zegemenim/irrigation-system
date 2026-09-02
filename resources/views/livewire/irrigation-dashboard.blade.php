@@ -181,8 +181,8 @@
                     <div class="mt-4 space-y-4">
                         <label class="block">
                             <span class="text-sm font-medium text-slate-300">Maksimum basınç</span>
-                            <input type="number" step="0.01" min="0.5" max="4" wire:model="max_safe_pressure_bar" class="mt-1 block h-11 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 text-white outline-none ring-0 transition focus:border-cyan-300">
-                            <span class="mt-1 block text-xs text-slate-500">4 bar üstünde cihaz FORCE_STOP alır.</span>
+                            <input type="number" step="0.01" min="0.5" max="16" wire:model="max_safe_pressure_bar" class="mt-1 block h-11 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 text-white outline-none ring-0 transition focus:border-cyan-300">
+                            <span class="mt-1 block text-xs text-slate-500">Bu değerin üstünde cihaz FORCE_STOP alır (Maks: 16).</span>
                             @error('max_safe_pressure_bar') <span class="mt-1 block text-sm text-red-300">{{ $message }}</span> @enderror
                         </label>
                         <label class="block">
