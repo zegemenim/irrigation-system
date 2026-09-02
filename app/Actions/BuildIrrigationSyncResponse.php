@@ -41,6 +41,8 @@ class BuildIrrigationSyncResponse
             );
         }
 
+        $drainMode = SystemSetting::boolValue('drain_mode');
+
         $systemMode = SystemSetting::value('system_mode', 'auto');
         $systemMode = in_array($systemMode, ['auto', 'manual'], true) ? $systemMode : 'auto';
         $activeSchedule = null;
@@ -51,6 +53,11 @@ class BuildIrrigationSyncResponse
         $targetHz = in_array(true, $setValves, true)
             ? $this->targetHz($systemMode, $activeSchedule)
             : 0.0;
+
+        if ($drainMode) {
+            $systemMode = 'drain';
+            $targetHz = 0.0;
+        }
 
         return [
             'status' => 'success',

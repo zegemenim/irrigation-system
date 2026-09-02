@@ -159,7 +159,7 @@
                 <section class="rounded-lg border border-white/10 bg-white/[0.08] p-5 shadow-xl shadow-slate-950/30 backdrop-blur">
                     <h2 class="text-lg font-semibold text-white">Hızlı kontrol</h2>
                     <div class="mt-4 grid gap-3">
-                        <button type="button" wire:click="toggleSystemMode" @disabled($emergency_stop) class="inline-flex h-14 items-center justify-center rounded-lg px-4 text-sm font-bold text-white transition disabled:cursor-not-allowed disabled:opacity-45 {{ $system_mode === 'manual' ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-amber-500 text-slate-950 hover:bg-amber-400' }}">
+                        <button type="button" wire:click="toggleSystemMode" @disabled($emergency_stop || $drain_mode) class="inline-flex h-14 items-center justify-center rounded-lg px-4 text-sm font-bold text-white transition disabled:cursor-not-allowed disabled:opacity-45 {{ $system_mode === 'manual' ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-amber-500 text-slate-950 hover:bg-amber-400' }}">
                             {{ $system_mode === 'manual' ? 'Otomatik moda geç' : 'Manuel kontrole geç' }}
                         </button>
                         <button type="button" wire:click="emergencyStop" wire:confirm="Tüm valfler kapatılacak ve cihaz FORCE_STOP alacak. Devam edilsin mi?" class="inline-flex h-14 items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-bold text-white transition hover:bg-red-500">
@@ -170,6 +170,9 @@
                                 Sistemi devam ettir
                             </button>
                         @endif
+                        <button type="button" wire:click="toggleDrainMode" @disabled($emergency_stop) class="inline-flex h-14 items-center justify-center rounded-lg px-4 text-sm font-bold text-white transition disabled:cursor-not-allowed disabled:opacity-45 {{ $drain_mode ? 'bg-indigo-600 hover:bg-indigo-500' : 'bg-slate-700 hover:bg-slate-600' }}">
+                            {{ $drain_mode ? 'Tahliyeyi bitir' : 'Sistemi tahliye et' }}
+                        </button>
                     </div>
                 </section>
 
@@ -191,6 +194,17 @@
                             <span class="text-sm font-medium text-slate-300">Manuel mod Hz</span>
                             <input type="number" step="0.1" min="0" max="55" wire:model="manual_target_hz" class="mt-1 block h-11 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 text-white outline-none ring-0 transition focus:border-cyan-300">
                             @error('manual_target_hz') <span class="mt-1 block text-sm text-red-300">{{ $message }}</span> @enderror
+                        </label>
+                        <label class="block">
+                            <span class="text-sm font-medium text-slate-300">Tahliye Vanası</span>
+                            <select wire:model="drain_valve_id" class="mt-1 block h-11 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 text-white outline-none ring-0 transition focus:border-cyan-300">
+                                <option value="">Vana seçilmedi</option>
+                                @foreach($valves as $v)
+                                    <option value="{{ $v['id'] }}">{{ $v['name'] }}</option>
+                                @endforeach
+                            </select>
+                            <span class="mt-1 block text-xs text-slate-500">Tahliye sırasında açılacak vanayı seçin.</span>
+                            @error('drain_valve_id') <span class="mt-1 block text-sm text-red-300">{{ $message }}</span> @enderror
                         </label>
                     </div>
                     <button type="submit" class="mt-5 inline-flex h-12 w-full items-center justify-center rounded-lg bg-teal-500 px-4 text-sm font-bold text-slate-950 transition hover:bg-teal-400">

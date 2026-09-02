@@ -45,6 +45,10 @@ class IrrigationDashboard extends Component
 
     public ?string $pressure_safety_tripped_at = null;
 
+    public bool $drain_mode = false;
+
+    public ?int $drain_valve_id = null;
+
     public ?string $notice = null;
 
     public string $notice_tone = 'success';
@@ -133,6 +137,9 @@ class IrrigationDashboard extends Component
         $this->pressure_safety_pressure_bar = SystemSetting::floatValue('pressure_safety_pressure_bar', 0.0) ?: null;
         $this->pressure_safety_limit_bar = SystemSetting::floatValue('pressure_safety_limit_bar', $this->max_safe_pressure_bar);
         $this->pressure_safety_tripped_at = $this->formatDateTimeFromString(SystemSetting::value('pressure_safety_tripped_at'));
+        
+        $this->drain_mode = SystemSetting::boolValue('drain_mode');
+        $this->drain_valve_id = (int) SystemSetting::value('drain_valve_id') ?: null;
 
         $latestTelemetry = TelemetryLog::query()
             ->latest('created_at')
@@ -183,6 +190,12 @@ class IrrigationDashboard extends Component
 
     public function toggleValve(int $valveId): void
     {
+        if ($this->drain_mode) {
+            $this->showNotice('Tahliye modu aktifken diğer vanalar kontrol edilemez.', 'danger');
+            $this->loadDashboardData();
+            return;
+        }
+
         if ($this->system_mode !== 'manual') {
             $this->showNotice('Manuel moda geçmeden valf komutu gönderilemez.', 'warning');
             $this->loadDashboardData();
@@ -211,6 +224,11 @@ class IrrigationDashboard extends Component
 
     public function toggleSystemMode(): void
     {
+        if ($this->drain_mode) {
+            $this->showNotice('Tahliye modu aktifken sistem modu değiştirilemez.', 'danger');
+            return;
+        }
+
         $newMode = $this->system_mode === 'manual' ? 'auto' : 'manual';
 
         SystemSetting::put('system_mode', $newMode);
@@ -226,17 +244,64 @@ class IrrigationDashboard extends Component
         $this->loadDashboardData();
     }
 
+    public function toggleDrainMode(): void
+    {
+        if ($this->emergency_stop) {
+            $this->showNotice('Acil durdurma aktifken tahliye yapılamaz.', 'danger');
+            return;
+        }
+
+        if ($this->drain_valve_id === null) {
+            $this->showNotice('Önce otomasyon ayarlarından bir tahliye vanası belirleyin.', 'warning');
+            return;
+        }
+
+        $newMode = ! $this->drain_mode;
+        SystemSetting::put('drain_mode', $newMode);
+
+        if ($newMode) {
+            // Sistemi manuel moda al
+            SystemSetting::put('system_mode', 'manual');
+
+            // Tüm vanaları kapat
+            Valve::query()->update([
+                'is_active' => false,
+                'last_activated_at' => null,
+            ]);
+
+            // Tahliye vanasını aç
+            Valve::query()->where('id', $this->drain_valve_id)->update([
+                'is_active' => true,
+                'last_activated_at' => now(),
+            ]);
+
+            $this->showNotice('Tahliye modu aktif! Tahliye vanası açıldı (Motor çalışmayacak).', 'success');
+        } else {
+            // Tahliye vanasını kapat
+            Valve::query()->where('id', $this->drain_valve_id)->update([
+                'is_active' => false,
+                'last_activated_at' => null,
+            ]);
+
+            $this->showNotice('Tahliye modu kapatıldı. Vana kapatıldı.', 'success');
+        }
+
+        $this->loadDashboardData();
+    }
+
     public function saveAutomationSettings(): void
     {
         $validated = $this->validate([
             'max_safe_pressure_bar' => ['required', 'numeric', 'min:0.5', 'max:4'],
             'default_target_hz' => ['required', 'numeric', 'min:0', 'max:55'],
             'manual_target_hz' => ['required', 'numeric', 'min:0', 'max:55'],
+            'drain_valve_id' => ['nullable', 'exists:valves,id'],
         ]);
 
         SystemSetting::put('max_safe_pressure_bar', round((float) $validated['max_safe_pressure_bar'], 2));
         SystemSetting::put('default_target_hz', round((float) $validated['default_target_hz'], 2));
         SystemSetting::put('manual_target_hz', round((float) $validated['manual_target_hz'], 2));
+        SystemSetting::put('drain_valve_id', $validated['drain_valve_id'] ?? '');
 
         $this->showNotice('Otomasyon ayarları kaydedildi.');
         $this->loadDashboardData();
