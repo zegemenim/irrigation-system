@@ -9,10 +9,11 @@ class SyncRelayRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     * Reuses the same device token as the irrigation system (IRRIGATION_DEVICE_TOKEN).
      */
     public function authorize(): bool
     {
-        $configuredToken = config('relay.device_token');
+        $configuredToken = config('irrigation.device_token');
 
         if (! is_string($configuredToken) || $configuredToken === '') {
             return ! app()->isProduction();

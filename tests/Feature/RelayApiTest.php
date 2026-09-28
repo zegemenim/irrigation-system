@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    config(['relay.device_token' => 'test-relay-token']);
+    config(['irrigation.device_token' => 'test-relay-token']);
 
     // Create default relays (8 total)
     foreach (range(1, 8) as $n) {
