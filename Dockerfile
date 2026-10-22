@@ -4,7 +4,7 @@ WORKDIR /app
 # Projedeki tüm dosyaları kopyala
 COPY . .
 # Tüm bağımlılıkları yükle ve build al
-RUN rm -f package-lock.json && npm install
+RUN npm ci
 RUN npm run build
 
 # Aşama 2: PHP 8.4 Apache Üretim Ortamı
